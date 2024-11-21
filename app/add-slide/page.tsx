@@ -58,6 +58,7 @@ export default function AddSlidePage() {
       />
       <button type="submit">Ajouter la slide</button>
       {message && <p>{message}</p>}
+      <br />
       <Link href={"/"}>Retour</Link>
     </form>
   );
