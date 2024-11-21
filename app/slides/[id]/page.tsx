@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import Link from "next/link";
 
 interface Slide {
   id: string;
@@ -7,31 +8,26 @@ interface Slide {
   content: string;
 }
 
-// Helper function to read the slides from the JSON file
 function getSlides(): Slide[] {
   const filePath = path.join(process.cwd(), "data", "slides.json");
   const fileContents = fs.readFileSync(filePath, "utf-8");
   return JSON.parse(fileContents) as Slide[];
 }
 
-// Generate static parameters for dynamic routing
 export async function generateStaticParams() {
   const slides = getSlides();
   return slides.map((slide) => ({ id: slide.id }));
 }
 
-// Page component for rendering slides
 export default async function SlidePage({ params }: { params: { id: string } }) {
-  const { id } = await params; // Await `params` to access `id`
-
   const slides = getSlides();
-  const slide = slides.find((s) => s.id === id);
+  const slide = slides.find((s) => s.id === params.id);
 
   if (!slide) {
     return <div>Slide not found</div>;
   }
 
-  const currentIndex = slides.findIndex((s) => s.id === id);
+  const currentIndex = slides.findIndex((s) => s.id === params.id);
   const prevSlide = slides[currentIndex - 1];
   const nextSlide = slides[currentIndex + 1];
 
@@ -42,18 +38,20 @@ export default async function SlidePage({ params }: { params: { id: string } }) 
         <p className="slide-content">{slide.content}</p>
       </div>
       <div className="slide-navigation">
-        <a
-          href={prevSlide ? `/slides/${prevSlide.id}` : undefined}
-          className={`nav-button ${!prevSlide ? "disabled" : ""}`}
-        >
-          Previous
-        </a>
-        <a
-          href={nextSlide ? `/slides/${nextSlide.id}` : undefined}
-          className={`nav-button ${!nextSlide ? "disabled" : ""}`}
-        >
-          Next
-        </a>
+        {prevSlide ? (
+          <Link href={`/slides/${prevSlide.id}`} className="nav-button">
+            Previous
+          </Link>
+        ) : (
+          <span className="nav-button disabled">Previous</span>
+        )}
+        {nextSlide ? (
+          <Link href={`/slides/${nextSlide.id}`} className="nav-button">
+            Next
+          </Link>
+        ) : (
+          <span className="nav-button disabled">Next</span>
+        )}
       </div>
     </div>
   );
