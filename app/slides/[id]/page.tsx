@@ -8,7 +8,7 @@ interface Slide {
   content: string;
 }
 
-// Function to fetch slides data from the JSON file
+// Fetch slides data
 function getSlides(): Slide[] {
   const filePath = path.join(process.cwd(), "data", "slides.json");
   const fileContents = fs.readFileSync(filePath, "utf-8");
@@ -23,7 +23,7 @@ export async function generateStaticParams() {
 
 // Page component for rendering slides
 export default function SlidePage({ params }: { params: { id: string } }) {
-  const id = params.id; // Directly use `params.id`
+  const { id } = params; // Ensure `params.id` is accessed as a plain object
 
   const slides = getSlides();
   const slide = slides.find((s) => s.id === id);
