@@ -23,7 +23,7 @@ export async function generateStaticParams() {
 
 // Page component for rendering slides
 export default function SlidePage({ params }: { params: { id: string } }) {
-  const { id } = params; // Directly access `params.id`
+  const id = params.id; // Directly use `params.id`
 
   const slides = getSlides();
   const slide = slides.find((s) => s.id === id);
