@@ -8,26 +8,31 @@ interface Slide {
   content: string;
 }
 
+// Function to fetch slides data from the JSON file
 function getSlides(): Slide[] {
   const filePath = path.join(process.cwd(), "data", "slides.json");
   const fileContents = fs.readFileSync(filePath, "utf-8");
   return JSON.parse(fileContents) as Slide[];
 }
 
+// Generate static parameters for dynamic routing
 export async function generateStaticParams() {
   const slides = getSlides();
   return slides.map((slide) => ({ id: slide.id }));
 }
 
-export default async function SlidePage({ params }: { params: { id: string } }) {
+// Page component for rendering slides
+export default function SlidePage({ params }: { params: { id: string } }) {
+  const { id } = params; // Directly access `params.id`
+
   const slides = getSlides();
-  const slide = slides.find((s) => s.id === params.id);
+  const slide = slides.find((s) => s.id === id);
 
   if (!slide) {
     return <div>Slide not found</div>;
   }
 
-  const currentIndex = slides.findIndex((s) => s.id === params.id);
+  const currentIndex = slides.findIndex((s) => s.id === id);
   const prevSlide = slides[currentIndex - 1];
   const nextSlide = slides[currentIndex + 1];
 
