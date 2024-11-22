@@ -1,35 +1,36 @@
-import fs from "fs";
-import path from "path";
+import { get, set, all } from "@vercel/edge-config";
 
 export async function GET() {
-  const filePath = path.join(process.cwd(), "data", "slides.json");
-  const slides = JSON.parse(await fs.promises.readFile(filePath, "utf-8"));
-  return new Response(JSON.stringify(slides), {
-    headers: { "Content-Type": "application/json" },
-  });
+  try {
+    // Fetch all slides from Edge Config
+    const slides = await all();
+    return new Response(JSON.stringify(slides), {
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    return new Response(
+      JSON.stringify({ error: "Failed to fetch slides", details: error.message }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
+  }
 }
 
 export async function POST(req: Request) {
-  const filePath = path.join(process.cwd(), "data", "slides.json");
+  try {
+    const newSlide = await req.json();
+    const slideId = newSlide.id;
 
-  // Lire les slides existantes
-  const slides = JSON.parse(await fs.promises.readFile(filePath, "utf-8"));
+    // Add new slide to Edge Config
+    await set(slideId, newSlide);
 
-  // Récupérer les données envoyées dans la requête
-  const newSlide = await req.json();
-
-  // Ajouter la nouvelle slide au tableau
-  slides.push(newSlide);
-
-  // Sauvegarder les données mises à jour
-  await fs.promises.writeFile(filePath, JSON.stringify(slides, null, 2));
-
-  return new Response(
-    JSON.stringify({ message: "Slide ajoutée avec succès", slide: newSlide }),
-    {
-      status: 201,
-      headers: { "Content-Type": "application/json" },
-    }
-  );
+    return new Response(
+      JSON.stringify({ message: "Slide ajoutée avec succès", slide: newSlide }),
+      { status: 201, headers: { "Content-Type": "application/json" } }
+    );
+  } catch (error) {
+    return new Response(
+      JSON.stringify({ error: "Failed to add slide", details: error.message }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
+  }
 }
-
