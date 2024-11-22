@@ -29,7 +29,10 @@ export async function POST(req: Request) {
     const newSlide = await req.json();
 
     // Fetch the existing slides
-    const existingSlides = (await get("slides")) || [];
+    const slides = await get("slides");
+
+    // Ensure slides is an array
+    const existingSlides = Array.isArray(slides) ? slides : [];
 
     // Add the new slide to the array
     const updatedSlides = [...existingSlides, newSlide];
