@@ -1,9 +1,9 @@
-import { get, update } from "@vercel/edge-config";
+import { get } from "@vercel/edge-config";
 
 export async function GET() {
   try {
-    // Fetch all slide IDs stored in Edge Config (if stored as a single array)
-    const slides = await get("slides"); // Assume all slides are stored under the key "slides"
+    // Fetch slides from Edge Config
+    const slides = await get("slides");
 
     if (!slides) {
       return new Response(JSON.stringify({ message: "No slides found" }), {
@@ -27,14 +27,28 @@ export async function POST(req: Request) {
   try {
     const newSlide = await req.json();
 
-    // Fetch existing slides
-    const slides = (await get("slides")) || []; // Assume "slides" is an array of slide objects
+    // Fetch the existing slides
+    const existingSlides = (await get("slides")) || [];
 
     // Add the new slide to the array
-    const updatedSlides = [...slides, newSlide];
+    const updatedSlides = [...existingSlides, newSlide];
 
-    // Update Edge Config with the new slides array
-    await update({ slides: updatedSlides });
+    // Update Edge Config via the REST API
+    const response = await fetch(
+      `https://edge-config.vercel.com/v1/configs/ecfg_pyozmzdpzbuinehyndzrw4pmi0ef/items`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `8c30652e-539d-4f10-b12b-4af386cf9aa4`,
+        },
+        body: JSON.stringify({ slides: updatedSlides }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to update Edge Config: ${response.statusText}`);
+    }
 
     return new Response(
       JSON.stringify({ message: "Slide added successfully", slide: newSlide }),
