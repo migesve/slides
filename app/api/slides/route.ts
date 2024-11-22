@@ -16,8 +16,9 @@ export async function GET() {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
     return new Response(
-      JSON.stringify({ error: "Failed to fetch slides", details: error.message }),
+      JSON.stringify({ error: "Failed to fetch slides", details: errorMessage }),
       { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
@@ -55,8 +56,9 @@ export async function POST(req: Request) {
       { status: 201, headers: { "Content-Type": "application/json" } }
     );
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
     return new Response(
-      JSON.stringify({ error: "Failed to add slide", details: error.message }),
+      JSON.stringify({ error: "Failed to add slide", details: errorMessage }),
       { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
