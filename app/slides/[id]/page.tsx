@@ -22,8 +22,12 @@ export async function generateStaticParams() {
 }
 
 // Page component for rendering slides
-export default async function SlidePage({ params, }: { params: Promise<{ id: string }> }) {
-  const id = (await params).id
+export default async function SlidePage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const id = (await params).id;
   const slides = getSlides();
   const slide = slides.find((s) => s.id === id);
 
@@ -56,6 +60,11 @@ export default async function SlidePage({ params, }: { params: Promise<{ id: str
         ) : (
           <span className="nav-button disabled">Next</span>
         )}
+      </div>
+      <div className="back-to-home">
+        <Link href="/" className="back-button">
+            Retour à l'Accueil
+        </Link>
       </div>
     </div>
   );
