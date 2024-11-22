@@ -63,7 +63,7 @@ export default async function SlidePage({
       </div>
       <div className="back-to-home">
         <Link href="/" className="back-button">
-            Retour à l'Accueil
+            Retour à l&apos;Accueil
         </Link>
       </div>
     </div>

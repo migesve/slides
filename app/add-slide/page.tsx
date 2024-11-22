@@ -100,7 +100,7 @@ export default function AddSlidePage() {
             href="/"
             className="text-blue-500 hover:underline dark:text-blue-400"
           >
-            Retour à l'Accueil
+            Retour à l&apos;Accueil
           </Link>
         </div>
       </form>
